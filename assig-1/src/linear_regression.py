@@ -21,6 +21,8 @@ def read_test_data(input_path):
 
 def save_to_csv(preds, fname):
     pred_modif = preds
+    for i in range(len(preds)):
+        pred_modif[i] = int(round(pred_modif[i],-2))
     pd.DataFrame({"id": list(range(0, len(preds))), "shares": pred_modif}).to_csv(fname, index=False, header=True)
 
 train_data = "../data/train_data.csv"
