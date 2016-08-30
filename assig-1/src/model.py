@@ -5,11 +5,25 @@ import matplotlib.pyplot as plt
 from sklearn.decomposition import RandomizedPCA
 from sklearn import datasets, linear_model
 
+
+def pre_process_test(X_test,ratio=3.0):
+    mean = np.mean(X_test, axis=0)
+    std = np.std(X_test, axis=0)
+    for i in range(len(X_test[0])):
+        # print mean[i], std[i]
+        for j in range(len(X_test)):
+            if X_test[j][i] > mean[i] + ratio * std[i] or X_test[j][i] < mean[i] - ratio * std[i]:
+                X_test[j][i] = mean[i] + ratio * std[i]
+            else:
+                pass
+    return X_test
+
+
 def pre_process(X_train, y_train, ratio=(3.0,3.0)):
     mean = np.mean(X_train, axis=0)
     std = np.std(X_train, axis=0)
     for i in range(len(X_train[0])):
-        print mean[i], std[i]
+        # print mean[i], std[i]
         for j in range(len(X_train)):
             if X_train[j][i] > mean[i] + ratio[0] * std[i] or X_train[j][i] < mean[i] - ratio[0] * std[i]:
                 X_train[j][i] = mean[i] + ratio[0] * std[i]
@@ -18,7 +32,7 @@ def pre_process(X_train, y_train, ratio=(3.0,3.0)):
 
     mean = np.mean(y_train, axis=0)
     std = np.std(y_train, axis=0)
-    print mean, std
+    # print mean, std
     for i in range(len(y_train)):
         if y_train[i] > mean + ratio[1] * std or y_train[i] < mean - ratio[1] * std :
             y_train[i] = mean + ratio[1] * std
@@ -35,23 +49,27 @@ def read_training_data(input_path):
     raw_data = pd.read_csv(input_path, header=0)
     labels = list(pd.read_csv(input_path, nrows=1))
     X = raw_data.as_matrix()[:, 1:-1]
-    X = X.astype(dtype='double')
+    X = X.astype(dtype='float')
     y = raw_data.as_matrix()[:, -1:]
-    y = y.astype(dtype='double')
+    y = y.astype(dtype='float')
     return X, y, labels
 
 
 def read_test_data(input_path):
     raw_data = pd.read_csv(input_path, header=0)
-    raw_data = raw_data._get_numeric_data()
-    X = raw_data.as_matrix()
+    X = raw_data.as_matrix()[:, 1:]
+    X = X.astype(dtype='float')
     return X
+
+
+def rmse(predictions, targets):
+    return np.sqrt(((predictions - targets) ** 2).mean())
 
 
 def save_to_csv(preds, fname):
     pred_modif = preds
-    # for i in range(len(preds)):
-        # pred_modif[i] = int(round(pred_modif[i],-1))
+    for i in range(len(preds)):
+        pred_modif[i] = int(round(pred_modif[i],-2))
     pd.DataFrame({"id": list(range(0, len(preds))), "shares": pred_modif}).to_csv(fname, index=False, header=True)
 
 train_data = "../data/train_data.csv"
@@ -61,7 +79,8 @@ X_train, y_train, labels = read_training_data(train_data)
 X_test = read_test_data(test_data)
 
 #Preprocessing
-X_train, y_train = pre_process(X_train, y_train, ratio=(4.5, 2.0))
+X_train, y_train = pre_process(X_train, y_train, ratio=(3.0, 1.25))
+X_test = pre_process_test(X_test, ratio=3.0)
 
 # PLotting
 # plt.hist(y_train, bins=50)
@@ -80,8 +99,15 @@ regr = linear_model.Ridge(alpha=0.5)
 # regr = linear_model.LarsCV(max_iter=1000, n_jobs=3)
 
 # Train the model using the training sets
+cv_fold = 10
+regr.fit(X_train[len(X_train)/cv_fold:], y_train[len(X_train)/cv_fold:])
 
-regr.fit(X_train, y_train)
+# Cross-Validate
+cv_preds = regr.predict(X_train[:len(X_train)/cv_fold])
+mse = rmse(y_train[:len(X_train)/cv_fold], cv_preds)
+print mse
+
+# Predict the output from trained model
 preds = regr.predict(X_test)
 print preds
 save_to_csv(preds.reshape(7643), 'linear_regression_no_pp.csv')

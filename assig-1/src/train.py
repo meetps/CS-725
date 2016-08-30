@@ -10,32 +10,33 @@ from sklearn.decomposition import PCA
 def read_training_data(input_path):
     raw_data = pd.read_csv(input_path, header=0)
     raw_data = raw_data._get_numeric_data()
-    X = MinMaxScaler().fit_transform(raw_data.as_matrix()[:, 0:-1])
-    y = MinMaxScaler().fit_transform(raw_data.as_matrix()[:, -1:])
+    X = MinMaxScaler().fit_transform(raw_data.as_matrix()[:, 1:-1])
+    y = raw_data.as_matrix()[:, -1:] / 100000.0
     y_mean = np.mean(raw_data.as_matrix()[:, -1:])
-    pca = PCA(n_components=5)
-    return pca.fit_transform(X), y, y_mean
+    # pca = PCA(n_components=5)
+    # return pca.fit_transform(X), y, y_mean
+    return X, y, y_mean
 
 
 def read_test_data(input_path):
     raw_data = pd.read_csv(input_path, header=0)
     raw_data = raw_data._get_numeric_data()
-    X = MinMaxScaler().fit_transform(raw_data.as_matrix())
-    pca = PCA(n_components=5)
-    return pca.fit_transform(X)
+    X = MinMaxScaler().fit_transform(raw_data.as_matrix())[:,1:]
+    # pca = PCA(n_components=5)
+    # return pca.fit_transform(X)
+    return X
 
 
 def save_to_csv(preds, fname, y_mean):
-    pred_modif = preds * y_mean * 100
+    pred_modif = preds * 100000.0
     for i in range(len(preds)):
-        pred_modif[i] = int(round(pred_modif[i], -2))
+        pred_modif[i] = int(round(pred_modif[i], -1))
     pd.DataFrame({"id": list(range(0, len(preds))), "shares": pred_modif}).to_csv(fname, index=False, header=True)
 
 
 def baseline_model():
     model = Sequential()
-    model.add(Dense(30, input_dim=5, init='uniform', activation='relu'))
-    model.add(Dense(16, init='uniform', activation='relu'))
+    model.add(Dense(400, input_dim=58, init='uniform', activation='relu'))
     model.add(Dense(1, init='uniform'))
     model.compile(loss='mean_squared_error', optimizer='adam')
     return model

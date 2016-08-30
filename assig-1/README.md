@@ -8,8 +8,8 @@
 
 #### Model and Feature Engineering
 
-* Ridge Regression with weighing parameter alpha=0.1
-* 5-fold Cross Validation from train data
+* Ridge Regression with weighing parameter alpha=0.5
+* 10/5-fold Cross Validation from train data
 
 #### Preprocessing
 
@@ -19,13 +19,17 @@
 
 #### PostProcessing
 
-Rounding of to nearest tens.
+Rounding of to nearest hundreds as all data in train output is in hundreds.
 
 
 
 ### Run Code 
 
 `python main.py`
+
+### Output
+
+`output` directory.
 
 
 ### Additional
