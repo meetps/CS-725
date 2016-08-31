@@ -12,8 +12,10 @@ def pre_process_test(X_test,ratio=3.0):
     for i in range(len(X_test[0])):
         # print mean[i], std[i]
         for j in range(len(X_test)):
-            if X_test[j][i] > mean[i] + ratio * std[i] or X_test[j][i] < mean[i] - ratio * std[i]:
+            if X_test[j][i] > mean[i] + ratio * std[i]:
                 X_test[j][i] = mean[i] + ratio * std[i]
+            elif X_test[j][i] < mean[i] - ratio * std[i]:
+                X_test[j][i] = mean[i] - ratio * std[i]
             else:
                 pass
     return X_test
@@ -25,8 +27,10 @@ def pre_process(X_train, y_train, ratio=(3.0,3.0)):
     for i in range(len(X_train[0])):
         # print mean[i], std[i]
         for j in range(len(X_train)):
-            if X_train[j][i] > mean[i] + ratio[0] * std[i] or X_train[j][i] < mean[i] - ratio[0] * std[i]:
+            if X_train[j][i] > mean[i] + ratio[0] * std[i]:
                 X_train[j][i] = mean[i] + ratio[0] * std[i]
+            elif X_train[j][i] < mean[i] - ratio[0] * std[i]:
+                X_train[j][i] = mean[i] - ratio[0] * std[i]
             else:
                 pass
 
@@ -34,8 +38,10 @@ def pre_process(X_train, y_train, ratio=(3.0,3.0)):
     std = np.std(y_train, axis=0)
     # print mean, std
     for i in range(len(y_train)):
-        if y_train[i] > mean + ratio[1] * std or y_train[i] < mean - ratio[1] * std :
+        if y_train[i] > mean + ratio[1] * std:
             y_train[i] = mean + ratio[1] * std
+        elif y_train[i] < mean - ratio[1] * std:
+            y_train[i] = mean - ratio[1] * std
         else:
             pass
 
