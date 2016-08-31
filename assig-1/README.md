@@ -1,3 +1,7 @@
+Meet Pragnesh Shah
+13D070003
+
+
 ### Code : 
 
 `main.py` contains the code for the entire regression problem.
