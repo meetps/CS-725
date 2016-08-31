@@ -68,6 +68,15 @@ def read_test_data(input_path):
     return X
 
 
+def plot(X_train, y_train):
+    plt.hist(y_train, bins=50)
+    plt.show()
+    for i in range(1, len(X_train[0])):
+        plt.hist((X_train.T)[i], bins=50)
+        plt.title(labels[i])
+        plt.show()
+
+
 def rmse(predictions, targets):
     return np.sqrt(((predictions - targets) ** 2).mean())
 
@@ -75,7 +84,7 @@ def rmse(predictions, targets):
 def save_to_csv(preds, fname):
     pred_modif = preds
     for i in range(len(preds)):
-        pred_modif[i] = int(round(pred_modif[i],-2))
+        pred_modif[i] = int(round(pred_modif[i],-1))
     pd.DataFrame({"id": list(range(0, len(preds))), "shares": pred_modif}).to_csv(fname, index=False, header=True)
 
 train_data = "../data/train_data.csv"
@@ -89,13 +98,7 @@ X_train, y_train = pre_process(X_train, y_train, ratio=(3.0, 1.25))
 X_test = pre_process_test(X_test, ratio=3.0)
 
 # PLotting
-# plt.hist(y_train, bins=50)
-# plt.show()
-
-# for i in range(1,len(X_train[0])):
-#     plt.hist((X_train.T)[i], bins=50)
-#     plt.title(labels[i])
-#     plt.show()
+# plot(X_train, y_train)
 
 # Create linear regression object
 # regr = linear_model.LinearRegression()
