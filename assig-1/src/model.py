@@ -84,7 +84,7 @@ def rmse(predictions, targets):
 def save_to_csv(preds, fname):
     pred_modif = preds
     for i in range(len(preds)):
-        pred_modif[i] = int(round(pred_modif[i],-1))
+        pred_modif[i] = int(round(pred_modif[i],-2))
     pd.DataFrame({"id": list(range(0, len(preds))), "shares": pred_modif}).to_csv(fname, index=False, header=True)
 
 train_data = "../data/train_data.csv"
@@ -94,7 +94,7 @@ X_train, y_train, labels = read_training_data(train_data)
 X_test = read_test_data(test_data)
 
 #Preprocessing
-X_train, y_train = pre_process(X_train, y_train, ratio=(3.0, 1.25))
+X_train, y_train = pre_process(X_train, y_train, ratio=(3.0, 1.30))
 X_test = pre_process_test(X_test, ratio=3.0)
 
 # PLotting
