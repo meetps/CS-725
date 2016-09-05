@@ -93,6 +93,17 @@ test_data  = "../data/test_data.csv"
 X_train, y_train, labels = read_training_data(train_data)
 X_test = read_test_data(test_data)
 
+#Statistical Correlation
+for i in range(len(labels)-2):
+    corr = np.correlate(X_train.T[i,:], y_train.T[0,:])
+    print i, labels[i+1], corr
+
+# Delete low corr columns 
+low_corr_index = [3,4,5,12,13,14,15,16,17,30,31,32,33,34,37,52,53,54]
+# for i in range(len(low_corr_index)):
+X_train = np.delete(X_train, low_corr_index, 1)
+X_test = np.delete(X_test, low_corr_index, 1)
+
 #Preprocessing
 X_train, y_train = pre_process(X_train, y_train, ratio=(3.0, 1.30))
 X_test = pre_process_test(X_test, ratio=3.0)
