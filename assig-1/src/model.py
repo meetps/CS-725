@@ -87,47 +87,47 @@ def save_to_csv(preds, fname):
         pred_modif[i] = int(round(pred_modif[i],-2))
     pd.DataFrame({"id": list(range(0, len(preds))), "shares": pred_modif}).to_csv(fname, index=False, header=True)
 
-train_data = "../data/train_data.csv"
-test_data  = "../data/test_data.csv"
+train_data = "data.csv"
+test_data  = "data.csv"
 
 X_train, y_train, labels = read_training_data(train_data)
-X_test = read_test_data(test_data)
+# X_test = read_test_data(test_data)
 
-#Statistical Correlation
-for i in range(len(labels)-2):
-    corr = np.correlate(X_train.T[i,:], y_train.T[0,:])
-    print i, labels[i+1], corr
+# #Statistical Correlation
+# for i in range(len(labels)-2):
+#     corr = np.correlate(X_train.T[i,:], y_train.T[0,:])
+#     print i, labels[i+1], corr
 
-# Delete low corr columns 
-low_corr_index = [3,4,5,12,13,14,15,16,17,30,31,32,33,34,37,52,53,54]
-# for i in range(len(low_corr_index)):
-X_train = np.delete(X_train, low_corr_index, 1)
-X_test = np.delete(X_test, low_corr_index, 1)
+# # Delete low corr columns 
+# low_corr_index = [3,4,5,12,13,14,15,16,17,30,31,32,33,34,37,52,53,54]
+# # for i in range(len(low_corr_index)):
+# X_train = np.delete(X_train, low_corr_index, 1)
+# X_test = np.delete(X_test, low_corr_index, 1)
 
-#Preprocessing
-X_train, y_train = pre_process(X_train, y_train, ratio=(3.0, 1.30))
-X_test = pre_process_test(X_test, ratio=3.0)
+# #Preprocessing
+# X_train, y_train = pre_process(X_train, y_train, ratio=(3.0, 1.30))
+# X_test = pre_process_test(X_test, ratio=3.0)
 
-# PLotting
-# plot(X_train, y_train)
+# # PLotting
+# # plot(X_train, y_train)
 
-# Create linear regression object
-# regr = linear_model.LinearRegression()
-regr = linear_model.Ridge(alpha=0.5)
-# regr = linear_model.Lasso(alpha=0.1)
-# regr = linear_model.Lars(n_nonzero_coefs=np.inf)
-# regr = linear_model.LarsCV(max_iter=1000, n_jobs=3)
+# # Create linear regression object
+# # regr = linear_model.LinearRegression()
+# regr = linear_model.Ridge(alpha=0.5)
+# # regr = linear_model.Lasso(alpha=0.1)
+# # regr = linear_model.Lars(n_nonzero_coefs=np.inf)
+# # regr = linear_model.LarsCV(max_iter=1000, n_jobs=3)
 
-# Train the model using the training sets
-cv_fold = 10
-regr.fit(X_train[len(X_train)/cv_fold:], y_train[len(X_train)/cv_fold:])
+# # Train the model using the training sets
+# cv_fold = 10
+# regr.fit(X_train[len(X_train)/cv_fold:], y_train[len(X_train)/cv_fold:])
 
-# Cross-Validate
-cv_preds = regr.predict(X_train[:len(X_train)/cv_fold])
-mse = rmse(y_train[:len(X_train)/cv_fold], cv_preds)
-print mse
+# # Cross-Validate
+# cv_preds = regr.predict(X_train[:len(X_train)/cv_fold])
+# mse = rmse(y_train[:len(X_train)/cv_fold], cv_preds)
+# print mse
 
-# Predict the output from trained model
-preds = regr.predict(X_test)
-print preds
-save_to_csv(preds.reshape(7643), 'linear_regression_no_pp.csv')
+# # Predict the output from trained model
+# preds = regr.predict(X_test)
+# print preds
+# save_to_csv(preds.reshape(7643), 'linear_regression_no_pp.csv')
